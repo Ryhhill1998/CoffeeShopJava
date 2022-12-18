@@ -9,7 +9,6 @@ public class Main {
         System.out.println("Welcome to the Interactive Coffee Machine!\n");
 
         while (!quit) {
-            printMachineDetails(machine);
             printMainMenu();
             quit = getSelection(machine);
         }
@@ -25,6 +24,7 @@ public class Main {
                 "\n\tb - buy coffee" +
                 "\n\tf - fill coffee machine" +
                 "\n\tt - take money from coffee machine" +
+                "\n\tr - show machine resources" +
                 "\n\tq - quit\n");
     }
 
@@ -33,23 +33,24 @@ public class Main {
         String option = scanner.nextLine();
 
         switch (option) {
-            case "b":
-                // buy coffee
-                buyCoffee(machine);
-                break;
-            case "f":
-                // fill machine
-                fillMachine(machine);
-                break;
-            case "t":
-                // take money from machine
-                takeMoneyFromMachine(machine);
-                break;
-            case "q":
-                // quit
+            // buy coffee
+            case "b" -> buyCoffee(machine);
+
+            // fill machine
+            case "f" -> fillMachine(machine);
+
+            // take money from machine
+            case "t" -> takeMoneyFromMachine(machine);
+
+            // show machine resources
+            case "r" -> printMachineDetails(machine);
+
+            // quit
+            case "q" -> {
                 return true;
-            default:
-                System.out.println("Invalid option!");
+            }
+
+            default -> System.out.println("Invalid option!");
         }
 
         return false;
@@ -72,9 +73,12 @@ public class Main {
             coffeeSelection = getCoffeeSelection();
         }
 
-        boolean coffeeMade = machine.sellCoffee(coffeeSelection);
+        boolean coffeeMade = machine.makeCoffee(coffeeSelection);
+
         if (!coffeeMade) {
-            System.out.println("Not enough resources. Please refill the machine.");
+            System.out.println("Sorry, not enough " + machine.getInsufficientResources(coffeeSelection) + "!");
+        } else {
+            System.out.println("Making one " + machine.getCoffeeType(coffeeSelection));
         }
     }
 

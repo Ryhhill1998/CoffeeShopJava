@@ -40,49 +40,71 @@ public class Machine {
         updateMoney(coffee.getPrice());
     }
 
-    private boolean makeEspresso() {
-        Espresso espresso = new Espresso();
+    public boolean makeCoffee(int option) {
+        Coffee coffee = getCoffeeOfType(option);
 
-        if (canMakeCoffee(espresso)) {
-            updateStock(espresso);
+        if (canMakeCoffee(coffee)) {
+            updateStock(coffee);
             return true;
         }
 
         return false;
     }
 
-    private boolean makeCappuccino() {
-        Cappuccino cappuccino = new Cappuccino();
-
-        if (canMakeCoffee(cappuccino)) {
-            updateStock(cappuccino);
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean makeLatte() {
-        Latte latte = new Latte();
-
-        if (canMakeCoffee(latte)) {
-            updateStock(latte);
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean sellCoffee(int option) {
+    public String getCoffeeType(int option) {
         if (option == ESPRESSO_OPTION) {
-            return makeEspresso();
+            return "espresso";
         }
 
-        if (option == LATTE_OPTION) {
-            return makeLatte();
+        if (option == CAPPUCCINO_OPTION) {
+            return "cappuccino";
         }
 
-        return makeCappuccino();
+        return "latte";
+    }
+
+    private void addCommaIfNeeded(StringBuilder stringBuilder) {
+        if (!stringBuilder.isEmpty()) {
+            stringBuilder.append(", ");
+        }
+    }
+
+    private Coffee getCoffeeOfType(int option) {
+        if (option == ESPRESSO_OPTION) {
+            return new Espresso();
+        }
+
+        if (option == CAPPUCCINO_OPTION) {
+            return new Cappuccino();
+        }
+
+        return new Latte();
+    }
+
+    public String getInsufficientResources(int option) {
+        Coffee coffee = getCoffeeOfType(option);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        if (coffee.getWaterRequired() > waterAvailable) {
+            stringBuilder.append("water");
+        }
+
+        if (coffee.getMilkRequired() > milkAvailable) {
+            addCommaIfNeeded(stringBuilder);
+            stringBuilder.append("milk");
+        }
+
+        if (coffee.getCoffeeBeansRequired() > coffeeBeansAvailable) {
+            addCommaIfNeeded(stringBuilder);
+            stringBuilder.append("coffee beans");
+        }
+
+        if (coffee.getCupsRequired() > disposableCupsAvailable) {
+            addCommaIfNeeded(stringBuilder);
+            stringBuilder.append("disposable cups");
+        }
+
+        return stringBuilder.toString();
     }
 
     public void updateWater(int amount) {
